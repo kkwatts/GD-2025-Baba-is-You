@@ -4,6 +4,8 @@ public class GameManager : MonoBehaviour {
     private int level = 1;
     private string levelName;
 
+    public GameObject[] VFX;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         
