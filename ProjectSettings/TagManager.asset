@@ -4,9 +4,12 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Is Connector
   - Stop
   - You
+  - Win
+  - Object Block
+  - Connector Block
+  - Attribute Block
   layers:
   - Default
   - TransparentFX
@@ -14,9 +17,9 @@ TagManager:
   - 
   - Water
   - UI
-  - Connectors
-  - Objects
-  - Attributes
+  - Pushable
+  - 
+  - 
   - 
   - 
   - 

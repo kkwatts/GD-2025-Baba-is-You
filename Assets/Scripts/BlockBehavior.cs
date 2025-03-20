@@ -8,10 +8,16 @@ public class BlockBehavior : MonoBehaviour {
 
     private BoxCollider col;
     private GameObject manager;
+    private LayerMask pushLayer;
 
     private float minX, maxX, minY, maxY;
     private float originalZ, youZ;
     private Vector3 targetPosition;
+    private bool canMove;
+
+    private float goalParticleTimer;
+    private float goalParticleThreshold;
+    private float goalParticleMin, goalParticleMax;
 
     public int direction;
 
@@ -24,6 +30,7 @@ public class BlockBehavior : MonoBehaviour {
 
         col = GetComponent<BoxCollider>();
         manager = GameObject.FindGameObjectWithTag("GameController");
+        pushLayer = LayerMask.GetMask("Pushable");
 
         minX = -10.8f;
         maxX = 10.8f;
@@ -32,18 +39,42 @@ public class BlockBehavior : MonoBehaviour {
 
         originalZ = transform.position.z;
         youZ = -4.5f;
+        canMove = true;
+
+        goalParticleTimer = 0f;
+        goalParticleMin = 0.3f;
+        goalParticleMax = 1f;
+        goalParticleThreshold = 0f;
 
         targetPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update() {
+        // If the Object is "You"
         if (gameObject.tag == "You") {
             IsYou();
+            col.isTrigger = true;
             transform.position = new Vector3(transform.position.x, transform.position.y, youZ);
         }
         else {
+            col.isTrigger = false;
             transform.position = new Vector3(transform.position.x, transform.position.y, originalZ);
+        }
+
+        // If the Object is "Win"
+        if (gameObject.tag == "Win") {
+            goalParticleTimer += Time.deltaTime;
+            IsWin();
+        }
+        else {
+            goalParticleTimer = 0f;
+            goalParticleThreshold = 0f;
+        }
+
+        // If the Object can be Pushed
+        if (gameObject.layer == pushLayer) {
+            IsPushable();
         }
 
         col.size = new Vector3(col.size.x, col.size.y, 20f);
@@ -55,7 +86,7 @@ public class BlockBehavior : MonoBehaviour {
         RaycastHit hit;
         Vector3 movement = Vector3.zero;
 
-        if (Input.GetKeyDown(left)) {
+        if (Input.GetKeyDown(left) && canMove) {
             movement = new Vector3(-0.9f, 0f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f)) {
                 if (hit.transform.gameObject.tag == "Stop") {
@@ -66,7 +97,7 @@ public class BlockBehavior : MonoBehaviour {
                 movement = Vector3.zero;
             }
         }
-        else if (Input.GetKeyDown(right)) {
+        else if (Input.GetKeyDown(right) && canMove) {
             movement = new Vector3(0.9f, 0f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f)) {
                 if (hit.transform.gameObject.tag == "Stop") {
@@ -77,7 +108,7 @@ public class BlockBehavior : MonoBehaviour {
                 movement = Vector3.zero;
             }
         }
-        else if (Input.GetKeyDown(up)) {
+        else if (Input.GetKeyDown(up) && canMove) {
             movement = new Vector3(0f, 0.9f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f)) {
                 if (hit.transform.gameObject.tag == "Stop") {
@@ -88,7 +119,7 @@ public class BlockBehavior : MonoBehaviour {
                 movement = Vector3.zero;
             }
         }
-        else if (Input.GetKeyDown(down)) {
+        else if (Input.GetKeyDown(down) && canMove) {
             movement = new Vector3(0f, -0.9f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f)) {
                 if (hit.transform.gameObject.tag == "Stop") {
@@ -118,7 +149,8 @@ public class BlockBehavior : MonoBehaviour {
                 gameObject.GetComponent<BabaAnimation>().Move();
             }
 
-            Instantiate(manager.GetComponent<GameManager>().VFX[0], transform.position, Quaternion.identity);
+            GameObject dust = Instantiate(manager.GetComponent<GameManager>().VFX[0], transform.position, Quaternion.identity);
+            dust.GetComponent<VFXAnimation>().SetDirection(direction);
         }
 
         targetPosition += movement;
@@ -126,9 +158,26 @@ public class BlockBehavior : MonoBehaviour {
     }
 
     // If the Object is "Win"
-    private void OnCollisionEnter2D(Collision2D col) { 
+    private void OnTriggerEnter(Collider col) {
         if (gameObject.tag == "Win" && col.gameObject.tag == "You") {
-            Debug.Log("Win");
+            col.GetComponent<BlockBehavior>().canMove = false;
+            for (int i = 0; i < 8; i++) {
+                Instantiate(manager.GetComponent<GameManager>().VFX[2], transform.position, Quaternion.identity);
+            }
         }
+    }
+
+    private void IsWin() { 
+        if (goalParticleTimer >= goalParticleThreshold) {
+            goalParticleThreshold = Random.Range(goalParticleMin, goalParticleMax);
+            Instantiate(manager.GetComponent<GameManager>().VFX[1], transform.position, Quaternion.identity);
+            goalParticleTimer = 0f;
+        }
+    }
+
+    // If the Object can be Pushed
+    private void IsPushable() {
+        GameObject you = GameObject.FindGameObjectWithTag("You");
+        Debug.Log(gameObject.name);
     }
 }
