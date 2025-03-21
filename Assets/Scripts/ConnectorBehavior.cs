@@ -4,8 +4,8 @@ public class ConnectorBehavior : MonoBehaviour {
     public bool hasObject;
     public bool hasAttribute;
 
-    private GameObject objectBlock;
-    private GameObject attributeBlock;
+    public GameObject objectBlock;
+    public GameObject attributeBlock;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
@@ -15,8 +15,8 @@ public class ConnectorBehavior : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        objectBlock = CheckForBlock(1);
-        attributeBlock = CheckForBlock(2);
+        objectBlock = CheckForObject();
+        attributeBlock = CheckForAttribute();
 
         if (objectBlock != null) {
             hasObject = true;
@@ -33,27 +33,95 @@ public class ConnectorBehavior : MonoBehaviour {
         }
     }
 
-    private GameObject CheckForBlock(int type) {
-        RaycastHit hit;
-        Debug.DrawRay(transform.position, Vector3.down * 0.9f, Color.red);
+    // Object and attribute blocks may need to be arrays if putting more than two blocks into one statement is allowed
 
-        if (Physics.Raycast(transform.position, Vector3.up, out hit, 0.9f) ||
-            Physics.Raycast(transform.position, Vector3.down, out hit, 0.9f) ||
-            Physics.Raycast(transform.position, Vector3.left, out hit, 0.9f) ||
-            Physics.Raycast(transform.position, Vector3.right, out hit, 0.9f)) {
+    private GameObject CheckForObject() {
+        GameObject block = null;
+        RaycastHit upHit, downHit, leftHit, rightHit;
 
-            if (type == 1 && hit.transform.gameObject.tag == "Object Block") {
-                return hit.transform.gameObject;
-            }
-            else if (type == 2 && hit.transform.gameObject.tag == "Attribute Block") {
-                return hit.transform.gameObject;
-            }
-            else {
-                return null;
+        if (Physics.Raycast(transform.position, Vector3.up, out upHit, 0.9f)) {
+            if (upHit.transform.gameObject.tag == "Object Block") {
+                block = upHit.transform.gameObject;
             }
         }
-        else {
-            return null;
+        if (Physics.Raycast(transform.position, Vector3.down, out downHit, 0.9f) && block == null) { 
+            if (downHit.transform.gameObject.tag == "Object Block") {
+                block = downHit.transform.gameObject;
+            }
         }
+        if (Physics.Raycast(transform.position, Vector3.left, out leftHit, 0.9f) && block == null) {
+            if (leftHit.transform.gameObject.tag == "Object Block") {
+                block = leftHit.transform.gameObject;
+            }
+        }
+        if (Physics.Raycast(transform.position, Vector3.right, out rightHit, 0.9f) && block == null) {
+            if (rightHit.transform.gameObject.tag == "Object Block") {
+                block = rightHit.transform.gameObject;
+            }
+        }
+
+        if (block != objectBlock && objectBlock != null) {
+            objectBlock.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+        if (block != null && attributeBlock != null) {
+            block.GetComponent<BlockBehavior>().isConnected = true;
+            GetComponent<BlockBehavior>().isConnected = true;
+        }
+        else if (block == null && attributeBlock != null) {
+            attributeBlock.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+        else if (block != null && attributeBlock == null) {
+            block.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+
+        return block;
+    }
+
+    private GameObject CheckForAttribute() {
+        GameObject block = null;
+        RaycastHit upHit, downHit, leftHit, rightHit;
+
+        if (Physics.Raycast(transform.position, Vector3.up, out upHit, 0.9f)) {
+            if (upHit.transform.gameObject.tag == "Attribute Block") {
+                block = upHit.transform.gameObject;
+            }
+        }
+        if (Physics.Raycast(transform.position, Vector3.down, out downHit, 0.9f) && block == null) {
+            if (downHit.transform.gameObject.tag == "Attribute Block") {
+                block = downHit.transform.gameObject;
+            }
+        }
+        if (Physics.Raycast(transform.position, Vector3.left, out leftHit, 0.9f) && block == null) {
+            if (leftHit.transform.gameObject.tag == "Attribute Block") {
+                block = leftHit.transform.gameObject;
+            }
+        }
+        if (Physics.Raycast(transform.position, Vector3.right, out rightHit, 0.9f) && block == null) {
+            if (rightHit.transform.gameObject.tag == "Attribute Block") {
+                block = rightHit.transform.gameObject;
+            }
+        }
+
+        if (block != attributeBlock && attributeBlock != null) {
+            attributeBlock.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+        if (block != null && objectBlock != null) {
+            block.GetComponent<BlockBehavior>().isConnected = true;
+            GetComponent<BlockBehavior>().isConnected = true;
+        }
+        else if (block == null && objectBlock != null) {
+            objectBlock.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+        else if (block != null && objectBlock == null) {
+            block.GetComponent<BlockBehavior>().isConnected = false;
+            GetComponent<BlockBehavior>().isConnected = false;
+        }
+
+        return block;
     }
 }

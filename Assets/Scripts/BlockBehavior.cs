@@ -20,6 +20,7 @@ public class BlockBehavior : MonoBehaviour {
     private float goalParticleMin, goalParticleMax;
 
     public int direction;
+    public bool isConnected;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
@@ -47,6 +48,9 @@ public class BlockBehavior : MonoBehaviour {
         goalParticleThreshold = 0f;
 
         targetPosition = transform.position;
+
+        isConnected = false;
+        //gameObject.tag = "Untagged";
     }
 
     // Update is called once per frame
