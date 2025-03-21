@@ -9,6 +9,7 @@ public class BlockAnimation : MonoBehaviour {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         anim = GetComponent<Animator>();
+        active = false;
 
         if (gameObject.name == "Stop Block") {
             type = 1;
@@ -25,5 +26,13 @@ public class BlockAnimation : MonoBehaviour {
     void Update() {
         anim.SetInteger("Type", type);
         anim.SetBool("Active", active);
+    }
+
+    public void Activate() {
+        active = true;
+    }
+
+    public void Deactivate() {
+        active = false;
     }
 }

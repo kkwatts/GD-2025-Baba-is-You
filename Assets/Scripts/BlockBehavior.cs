@@ -8,7 +8,7 @@ public class BlockBehavior : MonoBehaviour {
 
     private BoxCollider col;
     private GameObject manager;
-    private LayerMask pushLayer;
+    private LayerMask pushLayer;         // Can objects like the flag be pushed by blocks?
 
     private float minX, maxX, minY, maxY;
     private float originalZ, youZ;
@@ -50,13 +50,15 @@ public class BlockBehavior : MonoBehaviour {
         targetPosition = transform.position;
 
         isConnected = false;
-        //gameObject.tag = "Untagged";
+        if (!gameObject.CompareTag("Connector Block") && !gameObject.CompareTag("Object Block") && !gameObject.CompareTag("Attribute Block")) {
+            gameObject.tag = "Untagged";
+        }
     }
 
     // Update is called once per frame
     void Update() {
         // If the Object is "You"
-        if (gameObject.tag == "You") {
+        if (gameObject.CompareTag("You")) {
             IsYou();
             col.isTrigger = true;
             transform.position = new Vector3(transform.position.x, transform.position.y, youZ);
@@ -67,7 +69,7 @@ public class BlockBehavior : MonoBehaviour {
         }
 
         // If the Object is "Win"
-        if (gameObject.tag == "Win") {
+        if (gameObject.CompareTag("Win")) {
             goalParticleTimer += Time.deltaTime;
             IsWin();
         }
@@ -76,12 +78,25 @@ public class BlockBehavior : MonoBehaviour {
             goalParticleThreshold = 0f;
         }
 
-        // If the Object can be Pushed
-        if (gameObject.layer == pushLayer) {
-            IsPushable();
-        }
-
+        // For All Objects
         col.size = new Vector3(col.size.x, col.size.y, 20f);
+
+        if (gameObject.CompareTag("Connector Block") || gameObject.CompareTag("Object Block")) {
+            if (isConnected) {
+                GetComponent<TextAnimation>().Activate();
+            }
+            else {
+                GetComponent<TextAnimation>().Deactivate();
+            }
+        }
+        else if (gameObject.CompareTag("Attribute Block")) {
+            if (isConnected) {
+                GetComponent<BlockAnimation>().Activate();
+            }
+            else {
+                GetComponent<BlockAnimation>().Deactivate();
+            }
+        }
     }
 
     // If the Object is "You"
@@ -93,8 +108,13 @@ public class BlockBehavior : MonoBehaviour {
         if (Input.GetKeyDown(left) && canMove) {
             movement = new Vector3(-0.9f, 0f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f)) {
-                if (hit.transform.gameObject.tag == "Stop") {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
                     movement = Vector3.zero;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        movement = Vector3.zero;
+                    }
                 }
             }
             else if (targetPosition.x + movement.x < minX) {
@@ -104,8 +124,13 @@ public class BlockBehavior : MonoBehaviour {
         else if (Input.GetKeyDown(right) && canMove) {
             movement = new Vector3(0.9f, 0f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f)) {
-                if (hit.transform.gameObject.tag == "Stop") {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
                     movement = Vector3.zero;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        movement = Vector3.zero;
+                    }
                 }
             }
             else if (targetPosition.x + movement.x > maxX){
@@ -115,8 +140,13 @@ public class BlockBehavior : MonoBehaviour {
         else if (Input.GetKeyDown(up) && canMove) {
             movement = new Vector3(0f, 0.9f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f)) {
-                if (hit.transform.gameObject.tag == "Stop") {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
                     movement = Vector3.zero;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        movement = Vector3.zero;
+                    }
                 }
             }
             else if (targetPosition.y + movement.y > maxY) {
@@ -126,8 +156,13 @@ public class BlockBehavior : MonoBehaviour {
         else if (Input.GetKeyDown(down) && canMove) {
             movement = new Vector3(0f, -0.9f, 0f);
             if (Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f)) {
-                if (hit.transform.gameObject.tag == "Stop") {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
                     movement = Vector3.zero;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        movement = Vector3.zero;
+                    }
                 }
             }
             else if (targetPosition.y + movement.y < minY) {
@@ -163,7 +198,7 @@ public class BlockBehavior : MonoBehaviour {
 
     // If the Object is "Win"
     private void OnTriggerEnter(Collider col) {
-        if (gameObject.tag == "Win" && col.gameObject.tag == "You") {
+        if (gameObject.CompareTag("Win") && col.gameObject.CompareTag("You")) {
             col.GetComponent<BlockBehavior>().canMove = false;
             for (int i = 0; i < 8; i++) {
                 Instantiate(manager.GetComponent<GameManager>().VFX[2], transform.position, Quaternion.identity);
@@ -180,8 +215,122 @@ public class BlockBehavior : MonoBehaviour {
     }
 
     // If the Object can be Pushed
-    private void IsPushable() {
-        GameObject you = GameObject.FindGameObjectWithTag("You");
-        Debug.Log(gameObject.name);
+    public bool CanPush(int direction) {
+        RaycastHit hit;
+        
+        if (direction == 1) {
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.9f)) {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
+                    return false;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        MoveBlock(direction);
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    MoveBlock(direction);
+                    return true;
+                }
+            }
+            else {
+                MoveBlock(direction);
+                return true;
+            }
+        }
+        else if (direction == 2) {
+            if (Physics.Raycast(transform.position, Vector3.left, out hit, 0.9f)) {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
+                    return false;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        MoveBlock(direction);
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    MoveBlock(direction);
+                    return true;
+                }
+            }
+            else {
+                MoveBlock(direction);
+                return true;
+            }
+        }
+        else if (direction == 3) {
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.9f)) {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
+                    return false;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        MoveBlock(direction);
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    MoveBlock(direction);
+                    return true;
+                }
+            }
+            else {
+                MoveBlock(direction);
+                return true;
+            }
+        }
+        else {
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.9f)) {
+                if (hit.transform.gameObject.CompareTag("Stop")) {
+                    return false;
+                }
+                else if ((pushLayer & (1 << hit.transform.gameObject.layer)) != 0) {
+                    if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
+                        MoveBlock(direction);
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    MoveBlock(direction);
+                    return true;
+                }
+            }
+            else {
+                MoveBlock(direction);
+                return true;
+            }
+        }
+    }
+
+    // Blocks currently move in the direction the player was previously facing as they move
+    // because direction is updated based upon what the movement is, rather than being updated
+    // before the movement
+    private void MoveBlock(int direction) {
+        if (direction == 1) {
+            transform.position += Vector3.down * 0.9f;
+        }
+        else if (direction == 2) {
+            transform.position += Vector3.left * 0.9f;
+        }
+        else if (direction == 3) {
+            transform.position += Vector3.right * 0.9f;
+        }
+        else {
+            transform.position += Vector3.up * 0.9f;
+        }
     }
 }

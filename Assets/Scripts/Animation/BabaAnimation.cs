@@ -43,8 +43,6 @@ public class BabaAnimation : MonoBehaviour {
     public void Move() {
         Reset();
         anim.SetBool("Moving", true);
-        //anim.SetBool("Blinking", false);
-        //idleTimer = 0f;
     }
 
     public void Reset() {

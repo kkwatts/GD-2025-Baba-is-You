@@ -1,53 +1,88 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
     private LayerMask objectLayer;
 
     private int level = 0;
     private string levelName;
+    private string objectName, attributeName;
 
     public GameObject[] VFX;
     public GameObject[] levels;
 
-    private GameObject[] connectors;
-    private GameObject[] objects;
+    private List<GameObject> connectors;
+    private List<GameObject> objects;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         objectLayer = LayerMask.GetMask("Objects");
 
-        connectors = GetConnectors(level).ToArray();
-        objects = GetObjects(level).ToArray();
+        objectName = "";
+        attributeName = "";
     }
 
     // Update is called once per frame
     void Update() {
+        connectors = GetConnectors(level);
+        objects = GetObjects(level);
+
         for (int i = 0; i < connectors.Count; i++) {
-            //if (connectors[i].GetComponent<BlockBehavior>().isConnected) {
-            //Debug.Log(connectors[i].GetComponent<ConnectorBehavior>().objectBlock.tag);
-            //}
-            Debug.Log(connectors[i]);
+            if (connectors[i].GetComponent<BlockBehavior>().isConnected) {
+                objectName = connectors[i].GetComponent<ConnectorBehavior>().objectBlock.gameObject.name;
+                attributeName = connectors[i].GetComponent<ConnectorBehavior>().attributeBlock.gameObject.name;
+                AddTags();
+            }
         }
     }
 
-    private ArrayList GetConnectors(int level) {
-        ArrayList temp = new ArrayList();
+    private List<GameObject> GetConnectors(int level) {
+        List<GameObject> temp = new();
         for (int i = 0; i < levels[level].transform.childCount; i++) {
-            if (levels[level].transform.GetChild(i).gameObject.tag == "Connector Block") {
+            if (levels[level].transform.GetChild(i).gameObject.CompareTag("Connector Block")) {
                 temp.Add(levels[level].transform.GetChild(i).gameObject);
+            }
+            if (levels[level].transform.GetChild(i).transform.childCount > 0) {
+                for (int j = 0; j < levels[level].transform.GetChild(i).transform.childCount; j++) {
+                    if (levels[level].transform.GetChild(i).transform.GetChild(j).gameObject.CompareTag("Connector Block")) {
+                        temp.Add(levels[level].transform.GetChild(i).transform.GetChild(j).gameObject);
+                    }
+                }
             }
         }
         return temp;
     }
 
-    private ArrayList GetObjects(int level) {
-        ArrayList temp = new ArrayList();
-        for (int i = 0; i < levels[level].transform.childCount; i++) { 
-            if (levels[level].transform.GetChild(i).gameObject.layer == objectLayer) {
+    private List<GameObject> GetObjects(int level) {
+        List<GameObject> temp = new();
+        for (int i = 0; i < levels[level].transform.childCount; i++) {
+            if ((objectLayer & (1 << levels[level].transform.GetChild(i).gameObject.layer)) != 0) {
                 temp.Add(levels[level].transform.GetChild(i).gameObject);
+            }
+            if (levels[level].transform.GetChild(i).transform.childCount > 0) {
+                for (int j = 0; j < levels[level].transform.GetChild(i).transform.childCount; j++) {
+                    if ((objectLayer & (1 << levels[level].transform.GetChild(i).transform.GetChild(j).gameObject.layer)) != 0) {
+                        temp.Add(levels[level].transform.GetChild(i).transform.GetChild(j).gameObject);
+                    }
+                }
             }
         }
         return temp;
+    }
+
+    private void AddTags() {
+        for (int i = 0; i < objects.Count; i++) {
+            if (objects[i].name == objectName) {
+                objects[i].tag = attributeName;
+            }
+        }
+    }
+
+    public void RemoveTags(string blockName, string blockTag) {
+        for (int i = 0; i < objects.Count; i++) {
+            if (objects[i].name == blockName) {
+                objects[i].tag = "Untagged";
+            }
+        }
     }
 }
