@@ -11,13 +11,13 @@ public class BlockAnimation : MonoBehaviour {
         anim = GetComponent<Animator>();
         active = false;
 
-        if (gameObject.name == "Stop Block") {
+        if (gameObject.name == "Stop") {
             type = 1;
         }
-        else if (gameObject.name == "Win Block") {
+        else if (gameObject.name == "Win") {
             type = 2;
         }
-        else if (gameObject.name == "You Block") {
+        else if (gameObject.name == "You") {
             type = 3;
         }
     }

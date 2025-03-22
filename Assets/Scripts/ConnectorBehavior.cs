@@ -1,136 +1,68 @@
 using UnityEngine;
 
 public class ConnectorBehavior : MonoBehaviour {
-    public bool hasObject;
-    public bool hasAttribute;
+    public bool isHorizontalRule, isVerticalRule;
 
-    public GameObject objectBlock;
-    public GameObject attributeBlock;
+    public GameObject[,] rules;
 
     private GameObject gameManager;
+    private LayerMask ruleLayer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
-        objectBlock = null;
-        attributeBlock = null;
+        isHorizontalRule = false;
+        isVerticalRule = false;
+
+        rules = new GameObject[2, 2];
 
         gameManager = GameObject.FindGameObjectWithTag("GameController");
+        ruleLayer = LayerMask.GetMask("Rules");
     }
 
     // Update is called once per frame
     void Update() {
-        objectBlock = CheckForObject();
-        attributeBlock = CheckForAttribute();
-
-        if (objectBlock != null) {
-            hasObject = true;
-        }
-        else {
-            hasObject = false;
-        }
-
-        if (attributeBlock != null) {
-            hasAttribute = true;
-        }
-        else {
-            hasAttribute = false;
-        }
+        rules = GetRules();
     }
 
-    // Object and attribute blocks may need to be arrays if putting more than two blocks into one statement is allowed
-    // Will probably need list of some sort for objects that will have multiple tags
+    private GameObject[,] GetRules() {
+        GameObject[,] temp = new GameObject[2, 2];
 
-    private GameObject CheckForObject() {
-        GameObject block = null;
-
-        if (Physics.Raycast(transform.position, Vector3.up, out RaycastHit upHit, 0.9f)) {
-            if (upHit.transform.gameObject.CompareTag("Object Block")) {
-                block = upHit.transform.gameObject;
+        if (Physics.Raycast(transform.position, Vector3.left, out RaycastHit leftHit, 0.9f, ruleLayer)) {
+            if (Physics.Raycast(transform.position, Vector3.right, out RaycastHit rightHit, 0.9f, ruleLayer)) {
+                temp[0, 0] = leftHit.transform.gameObject;
+                temp[0, 1] = rightHit.transform.gameObject;
+                isHorizontalRule = true;
+            }
+            else {
+                temp[0, 0] = null;
+                temp[0, 1] = null;
+                isHorizontalRule = false;
             }
         }
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit downHit, 0.9f) && block == null) { 
-            if (downHit.transform.gameObject.CompareTag("Object Block")) {
-                block = downHit.transform.gameObject;
-            }
-        }
-        if (Physics.Raycast(transform.position, Vector3.left, out RaycastHit leftHit, 0.9f) && block == null) {
-            if (leftHit.transform.gameObject.CompareTag("Object Block")) {
-                block = leftHit.transform.gameObject;
-            }
-        }
-        if (Physics.Raycast(transform.position, Vector3.right, out RaycastHit rightHit, 0.9f) && block == null) {
-            if (rightHit.transform.gameObject.CompareTag("Object Block")) {
-                block = rightHit.transform.gameObject;
-            }
+        else {
+            temp[0, 0] = null;
+            temp[0, 1] = null;
+            isHorizontalRule = false;
         }
 
-        if (block != objectBlock && objectBlock != null) {
-            objectBlock.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
-            if (attributeBlock != null) {
-                gameManager.GetComponent<GameManager>().RemoveTags(objectBlock.name, attributeBlock.tag);
+        if (Physics.Raycast(transform.position, Vector3.up, out RaycastHit upHit, 0.9f, ruleLayer)) {
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit downHit, 0.9f, ruleLayer)) {
+                temp[1, 0] = upHit.transform.gameObject;
+                temp[1, 1] = downHit.transform.gameObject;
+                isVerticalRule = true;
+            }
+            else {
+                temp[1, 0] = null;
+                temp[1, 1] = null;
+                isVerticalRule = false;
             }
         }
-        if (block != null && attributeBlock != null) {
-            block.GetComponent<BlockBehavior>().isConnected = true;
-            GetComponent<BlockBehavior>().isConnected = true;
-        }
-        else if (block == null && attributeBlock != null) {
-            attributeBlock.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
-        }
-        else if (block != null && attributeBlock == null) {
-            block.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
+        else {
+            temp[1, 0] = null;
+            temp[1, 1] = null;
+            isVerticalRule = false;
         }
 
-        return block;
-    }
-
-    private GameObject CheckForAttribute() {
-        GameObject block = null;
-
-        if (Physics.Raycast(transform.position, Vector3.up, out RaycastHit upHit, 0.9f)) {
-            if (upHit.transform.gameObject.CompareTag("Attribute Block")) {
-                block = upHit.transform.gameObject;
-            }
-        }
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit downHit, 0.9f) && block == null) {
-            if (downHit.transform.gameObject.CompareTag("Attribute Block")) {
-                block = downHit.transform.gameObject;
-            }
-        }
-        if (Physics.Raycast(transform.position, Vector3.left, out RaycastHit leftHit, 0.9f) && block == null) {
-            if (leftHit.transform.gameObject.CompareTag("Attribute Block")) {
-                block = leftHit.transform.gameObject;
-            }
-        }
-        if (Physics.Raycast(transform.position, Vector3.right, out RaycastHit rightHit, 0.9f) && block == null) {
-            if (rightHit.transform.gameObject.CompareTag("Attribute Block")) {
-                block = rightHit.transform.gameObject;
-            }
-        }
-
-        if (block != attributeBlock && attributeBlock != null) {
-            attributeBlock.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
-            if (objectBlock != null) {
-                gameManager.GetComponent<GameManager>().RemoveTags(objectBlock.name, attributeBlock.tag);
-            }
-        }
-        if (block != null && objectBlock != null) {
-            block.GetComponent<BlockBehavior>().isConnected = true;
-            GetComponent<BlockBehavior>().isConnected = true;
-        }
-        else if (block == null && objectBlock != null) {
-            objectBlock.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
-        }
-        else if (block != null && objectBlock == null) {
-            block.GetComponent<BlockBehavior>().isConnected = false;
-            GetComponent<BlockBehavior>().isConnected = false;
-        }
-
-        return block;
+        return temp;
     }
 }

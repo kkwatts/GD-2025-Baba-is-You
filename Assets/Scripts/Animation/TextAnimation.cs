@@ -11,16 +11,16 @@ public class TextAnimation : MonoBehaviour {
         anim = GetComponent<Animator>();
         active = false;
 
-        if (gameObject.name == "Baba Text") {
+        if (gameObject.name == "Baba") {
             type = 1;
         }
-        else if (gameObject.name == "Is Text") {
+        else if (gameObject.name == "Is") {
             type = 2;
         }
-        else if (gameObject.name == "Flag Text") {
+        else if (gameObject.name == "Flag") {
             type = 3;
         }
-        else if (gameObject.name == "Wall Text") {
+        else if (gameObject.name == "Wall") {
             type = 4;
         }
     }
