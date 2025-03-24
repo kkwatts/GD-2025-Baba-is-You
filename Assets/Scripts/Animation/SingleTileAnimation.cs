@@ -15,6 +15,9 @@ public class SingleTileAnimation : MonoBehaviour {
         else if (gameObject.name == "Tile") {
             type = 2;
         }
+        else if (gameObject.name == "Rock") {
+            type = 3;
+        }
     }
 
     // Update is called once per frame

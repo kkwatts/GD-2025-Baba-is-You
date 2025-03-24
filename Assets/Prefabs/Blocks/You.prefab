@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6341851954501315579}
   - component: {fileID: 4163026447212399330}
   - component: {fileID: 1057306869095729635}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: You
   m_TagString: Attribute Block
   m_Icon: {fileID: 0}
@@ -105,9 +105,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.85098046, g: 0.22352943, b: 0.4156863, a: 1}
   inactiveColor: {r: 0.40784317, g: 0.18039216, b: 0.29803923, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &6341851954501315579
 Animator:
   serializedVersion: 7

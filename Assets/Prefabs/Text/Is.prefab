@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3275782491865710110}
   - component: {fileID: 2760416803089133997}
   - component: {fileID: 469755902986788801}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Is
   m_TagString: Connector Block
   m_Icon: {fileID: 0}
@@ -110,6 +110,8 @@ MonoBehaviour:
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &28538045207260181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,10 +124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5541c938087ecc44b1af8e59f264046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasObject: 0
-  hasAttribute: 0
-  objectBlock: {fileID: 0}
-  attributeBlock: {fileID: 0}
+  isHorizontalRule: 0
+  isVerticalRule: 0
 --- !u!95 &3275782491865710110
 Animator:
   serializedVersion: 7

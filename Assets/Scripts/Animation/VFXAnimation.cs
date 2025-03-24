@@ -5,16 +5,18 @@ public class VFXAnimation : MonoBehaviour {
     private SpriteRenderer render;
     private GameObject player;
 
-    private int type;
     private int direction;
 
     private Vector3 targetPosition;
     private float maxGoalTravelDistance;
     private float maxWinTravelDistance;
+    private float maxCloudTravelDistance;
 
+    public int type;
     public float dustSpeed;
     public float goalSpeed;
     public float winSpeed;
+    public float cloudSpeed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
@@ -23,17 +25,16 @@ public class VFXAnimation : MonoBehaviour {
 
         maxGoalTravelDistance = 1f;
         maxWinTravelDistance = 5f;
+        maxCloudTravelDistance = 1f;
 
-        if (render.sprite.name == "DustParticle_0") {
-            type = 1;
-        }
-        else if (render.sprite.name == "GoalParticle_0") {
-            type = 2;
+        if (type == 2) {
             targetPosition = new Vector3(transform.position.x + Random.Range(-maxGoalTravelDistance, maxGoalTravelDistance), transform.position.y + Random.Range(-maxGoalTravelDistance, maxGoalTravelDistance), transform.position.z);
         }
-        else if (render.sprite.name == "WinParticle_0") {
-            type = 3;
+        else if (type == 3) {
             targetPosition = new Vector3(transform.position.x + Random.Range(-maxWinTravelDistance, maxWinTravelDistance), transform.position.y + Random.Range(-maxWinTravelDistance, maxWinTravelDistance), transform.position.z);
+        }
+        else if (type == 4) {
+            targetPosition = new Vector3(transform.position.x + Random.Range(-maxCloudTravelDistance, maxCloudTravelDistance), transform.position.y + Random.Range(-maxCloudTravelDistance, maxCloudTravelDistance), transform.position.z);
         }
     }
 
@@ -60,6 +61,9 @@ public class VFXAnimation : MonoBehaviour {
         }
         else if (type == 3) {
             transform.position = Vector3.Lerp(transform.position, targetPosition, winSpeed);
+        }
+        else if (type == 4) {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, cloudSpeed);
         }
     }
 

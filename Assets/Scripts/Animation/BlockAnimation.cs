@@ -20,6 +20,9 @@ public class BlockAnimation : MonoBehaviour {
         else if (gameObject.name == "You") {
             type = 3;
         }
+        else if (gameObject.name == "Push") {
+            type = 4;
+        }
     }
 
     // Update is called once per frame

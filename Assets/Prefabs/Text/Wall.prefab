@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6073653911206451009}
   - component: {fileID: 2401048908863783094}
   - component: {fileID: 9140101084201471047}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Object Block
   m_Icon: {fileID: 0}
@@ -105,9 +105,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.45098042, g: 0.45098042, b: 0.45098042, a: 1}
   inactiveColor: {r: 0.16078432, g: 0.19215688, b: 0.25490198, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &6073653911206451009
 Animator:
   serializedVersion: 7

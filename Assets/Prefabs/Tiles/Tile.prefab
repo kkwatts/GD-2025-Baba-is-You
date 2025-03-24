@@ -106,9 +106,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.13725491, g: 0.13725491, b: 0.13725491, a: 1}
   inactiveColor: {r: 0.14117648, g: 0.14117648, b: 0.14117648, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &3684022433612861304
 Animator:
   serializedVersion: 7

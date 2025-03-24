@@ -31,6 +31,13 @@ public class ConnectorBehavior : MonoBehaviour {
             if (Physics.Raycast(transform.position, Vector3.right, out RaycastHit rightHit, 0.9f, ruleLayer)) {
                 temp[0, 0] = leftHit.transform.gameObject;
                 temp[0, 1] = rightHit.transform.gameObject;
+
+                if (!isHorizontalRule) {
+                    temp[0, 0].GetComponent<BlockBehavior>().ConnectionFormed();
+                    temp[0, 1].GetComponent<BlockBehavior>().ConnectionFormed();
+                    GetComponent<BlockBehavior>().ConnectionFormed();
+                }
+
                 isHorizontalRule = true;
             }
             else {
@@ -49,6 +56,13 @@ public class ConnectorBehavior : MonoBehaviour {
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit downHit, 0.9f, ruleLayer)) {
                 temp[1, 0] = upHit.transform.gameObject;
                 temp[1, 1] = downHit.transform.gameObject;
+
+                if (!isVerticalRule) {
+                    temp[1, 0].GetComponent<BlockBehavior>().ConnectionFormed();
+                    temp[1, 1].GetComponent<BlockBehavior>().ConnectionFormed();
+                    GetComponent<BlockBehavior>().ConnectionFormed();
+                }
+
                 isVerticalRule = true;
             }
             else {

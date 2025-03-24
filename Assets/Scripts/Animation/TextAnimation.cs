@@ -23,6 +23,9 @@ public class TextAnimation : MonoBehaviour {
         else if (gameObject.name == "Wall") {
             type = 4;
         }
+        else if (gameObject.name == "Rock") {
+            type = 5;
+        }
     }
 
     // Update is called once per frame

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4857154013627479856}
   - component: {fileID: 7998884822320681830}
   - component: {fileID: 3658427219996979251}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Stop
   m_TagString: Attribute Block
   m_Icon: {fileID: 0}
@@ -105,9 +105,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.29411766, g: 0.36078432, b: 0.10980393, a: 1}
   inactiveColor: {r: 0.18823531, g: 0.21960786, b: 0.14117648, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &4857154013627479856
 Animator:
   serializedVersion: 7

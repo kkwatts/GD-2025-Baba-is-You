@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4482466695778467029}
   - component: {fileID: 3774166868634325939}
   - component: {fileID: 6813789807442242794}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Baba
   m_TagString: Object Block
   m_Icon: {fileID: 0}
@@ -105,9 +105,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.85098046, g: 0.22352943, b: 0.4156863, a: 1}
   inactiveColor: {r: 0.40784317, g: 0.18039216, b: 0.29803923, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &4482466695778467029
 Animator:
   serializedVersion: 7
