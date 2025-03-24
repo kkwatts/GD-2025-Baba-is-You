@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 2229999528968628906}
   - component: {fileID: 3086774189137878996}
   - component: {fileID: 5761871097763829650}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Flag
-  m_TagString: Untagged
+  m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -106,9 +106,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.9294118, g: 0.8862746, b: 0.52156866, a: 1}
   inactiveColor: {r: 0.9294118, g: 0.8862746, b: 0.52156866, a: 1}
+  tags: []
   direction: 0
   isConnected: 0
   moveBufferThreshold: 0
+  isYou: 0
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &3874885912301963180
 Animator:
   serializedVersion: 7

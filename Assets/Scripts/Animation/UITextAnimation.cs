@@ -3,10 +3,9 @@ using UnityEngine;
 public class UITextAnimation : MonoBehaviour {
     private Animator anim;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start() {
+    void Update() {
         anim = GetComponent<Animator>();
-        
+
         if (gameObject.name == "0") {
             anim.SetInteger("Type", 0);
         }

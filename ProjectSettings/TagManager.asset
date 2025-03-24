@@ -10,6 +10,7 @@ TagManager:
   - Object Block
   - Connector Block
   - Attribute Block
+  - Object
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Water
   - UI
   - Rules
-  - Objects
+  - Push
   - 
   - 
   - 

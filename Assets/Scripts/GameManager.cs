@@ -3,13 +3,12 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
     private LayerMask ruleLayer;
-    private LayerMask objectLayer;
 
-    private int level = 0;
     private string levelName;
 
     public GameObject[] VFX;
     public GameObject[] levels;
+    public int level;
 
     private List<GameObject> rules;
     private List<GameObject> objects;
@@ -20,7 +19,6 @@ public class GameManager : MonoBehaviour {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         ruleLayer = LayerMask.GetMask("Rules");
-        objectLayer = LayerMask.GetMask("Objects");
 
         rules = new List<GameObject>();
         objects = new List<GameObject>();
@@ -53,7 +51,7 @@ public class GameManager : MonoBehaviour {
 
     private List<GameObject> GetYou() {
         List<GameObject> temp1 = GetObjectBlocks(level);
-        List<GameObject> temp2 = new List<GameObject>();
+        List<GameObject> temp2 = new();
         for (int i = 0; i < temp1.Count; i++) { 
             if (temp1[i].GetComponent<BlockBehavior>().tags.Contains("You")) {
                 temp2.Add(temp1[i]);
@@ -89,12 +87,12 @@ public class GameManager : MonoBehaviour {
     private List<GameObject> GetObjectBlocks(int level) {
         List<GameObject> temp = new();
         for (int i = 0; i < levels[level].transform.childCount; i++) { 
-            if ((objectLayer & (1 << levels[level].transform.GetChild(i).gameObject.layer)) != 0) {
+            if (levels[level].transform.GetChild(i).CompareTag("Object")) {
                 temp.Add(levels[level].transform.GetChild(i).gameObject);
             }
             if (levels[level].transform.GetChild(i).transform.childCount > 0) { 
                 for (int j = 0; j < levels[level].transform.GetChild(i).transform.childCount; j++) { 
-                    if ((objectLayer & (1 << levels[level].transform.GetChild(i).transform.GetChild(j).gameObject.layer)) != 0) {
+                    if (levels[level].transform.GetChild(i).transform.GetChild(j).CompareTag("Object")) {
                         temp.Add(levels[level].transform.GetChild(i).transform.GetChild(j).gameObject);
                     }
                 }

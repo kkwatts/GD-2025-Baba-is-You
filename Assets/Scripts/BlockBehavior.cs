@@ -14,7 +14,7 @@ public class BlockBehavior : MonoBehaviour {
 
     private BoxCollider col;
     private GameObject manager;
-    private LayerMask ruleLayer;
+    private LayerMask ruleLayer, pushLayer, originalLayer;
 
     private float minX, maxX, minY, maxY;
     private bool canMove;
@@ -48,6 +48,8 @@ public class BlockBehavior : MonoBehaviour {
         col = GetComponent<BoxCollider>();
         manager = GameObject.FindGameObjectWithTag("GameController");
         ruleLayer = LayerMask.GetMask("Rules");
+        pushLayer = LayerMask.GetMask("Push");
+        originalLayer = gameObject.layer;
 
         minX = -10.8f;
         maxX = 10.8f;
@@ -107,6 +109,14 @@ public class BlockBehavior : MonoBehaviour {
             goalParticleThreshold = 0f;
         }
 
+        // If the Object can be Pushed
+        if (tags.Contains("Push")) {
+            gameObject.layer = LayerMask.NameToLayer("Push");
+        }
+        else {
+            gameObject.layer = originalLayer;
+        }
+
         // For All Objects
         col.size = new Vector3(col.size.x, col.size.y, 20f);
 
@@ -144,9 +154,8 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     movement = Vector3.zero;
                 }
-                // objects that can be pushed will be on the same layer as non-pushable objects and won't always be detected?
-                // switch object signifier to gameobject tag and have push layer be used?
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, ruleLayer)) {
+                
+                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, ruleLayer)) {
                     if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         movement = Vector3.zero;
                     }
@@ -168,7 +177,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     movement = Vector3.zero;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, ruleLayer)) {
+                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, ruleLayer)) {
                     if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         movement = Vector3.zero;
                     }
@@ -190,7 +199,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     movement = Vector3.zero;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, ruleLayer)) {
+                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, ruleLayer)) {
                     if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         movement = Vector3.zero;
                     }
@@ -212,7 +221,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     movement = Vector3.zero;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, ruleLayer)) {
+                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("You") || Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, ruleLayer)) {
                     if (!hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         movement = Vector3.zero;
                     }
@@ -268,7 +277,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     return false;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, ruleLayer)) {
+                else if (Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.down, out hit, 0.9f, ruleLayer)) {
                     if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         if (!tags.Contains("You")) {
                             MoveBlock(direction);
@@ -301,7 +310,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     return false;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, ruleLayer)) {
+                else if (Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.left, out hit, 0.9f, ruleLayer)) {
                     if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         if (!tags.Contains("You")) {
                             MoveBlock(direction);
@@ -334,7 +343,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     return false;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, ruleLayer)) {
+                else if (Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.right, out hit, 0.9f, ruleLayer)) {
                     if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         if (!tags.Contains("You")) {
                             MoveBlock(direction);
@@ -367,7 +376,7 @@ public class BlockBehavior : MonoBehaviour {
                 if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Stop")) {
                     return false;
                 }
-                else if (hit.transform.gameObject.GetComponent<BlockBehavior>().tags.Contains("Push") || Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, ruleLayer)) {
+                else if (Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, pushLayer) || Physics.Raycast(targetPosition, Vector3.up, out hit, 0.9f, ruleLayer)) {
                     if (hit.transform.gameObject.GetComponent<BlockBehavior>().CanPush(direction)) {
                         if (!tags.Contains("You")) {
                             MoveBlock(direction);
