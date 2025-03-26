@@ -120,5 +120,11 @@ public class UITextAnimation : MonoBehaviour {
         else if (gameObject.name == "?") {
             anim.SetInteger("Type", 38);
         }
+        else if (gameObject.name == "!") {
+            anim.SetInteger("Type", 39);
+        }
+        else if (gameObject.name == ":") {
+            anim.SetInteger("Type", 40);
+        }
     }
 }

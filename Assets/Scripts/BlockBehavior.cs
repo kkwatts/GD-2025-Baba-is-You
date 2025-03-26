@@ -33,6 +33,8 @@ public class BlockBehavior : MonoBehaviour {
     public bool isYou;
     public Vector3 targetPosition;
 
+    private Vector3 originalPosition;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         left = KeyCode.LeftArrow;
@@ -72,6 +74,7 @@ public class BlockBehavior : MonoBehaviour {
         targetPosition = transform.position;
 
         isConnected = false;
+        originalPosition = transform.position;
 
         manager.GetComponent<GameManager>().GameUpdate();
     }
@@ -257,6 +260,7 @@ public class BlockBehavior : MonoBehaviour {
             for (int i = 0; i < 8; i++) {
                 Instantiate(manager.GetComponent<GameManager>().VFX[2], transform.position, Quaternion.identity);
             }
+            manager.GetComponent<GameManager>().GoToLevelSelect();
         }
     }
 
@@ -434,5 +438,13 @@ public class BlockBehavior : MonoBehaviour {
             GameObject cloud = Instantiate(manager.GetComponent<GameManager>().VFX[3], transform.position, Quaternion.identity);
             cloud.GetComponent<SpriteRenderer>().color = activeColor;
         }
+    }
+
+    public void ResetPos() {
+        direction = 3;
+        canMove = true;
+        targetPosition = originalPosition;
+        transform.position = targetPosition;
+        tags.Clear();
     }
 }

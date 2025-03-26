@@ -4,6 +4,7 @@ public class VFXAnimation : MonoBehaviour {
     private Animator anim;
     private SpriteRenderer render;
     private GameObject player;
+    private GameObject manager;
 
     private int direction;
 
@@ -22,6 +23,7 @@ public class VFXAnimation : MonoBehaviour {
     void Start() {
         anim = GetComponent<Animator>();
         render = GetComponent<SpriteRenderer>();
+        manager = GameObject.FindGameObjectWithTag("GameController");
 
         maxGoalTravelDistance = 1f;
         maxWinTravelDistance = 5f;
@@ -64,6 +66,10 @@ public class VFXAnimation : MonoBehaviour {
         }
         else if (type == 4) {
             transform.position = Vector3.Lerp(transform.position, targetPosition, cloudSpeed);
+        }
+
+        if (!manager.GetComponent<GameManager>().inLevel) {
+            Destroy(gameObject);
         }
     }
 
