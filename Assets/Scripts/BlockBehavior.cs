@@ -38,6 +38,8 @@ public class BlockBehavior : MonoBehaviour {
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
+        targetPosition = transform.position;
+
         left = KeyCode.LeftArrow;
         right = KeyCode.RightArrow;
         up = KeyCode.UpArrow;
@@ -72,8 +74,6 @@ public class BlockBehavior : MonoBehaviour {
         goalParticleMin = 0.3f;
         goalParticleMax = 1f;
         goalParticleThreshold = 0f;
-
-        targetPosition = transform.position;
 
         isConnected = false;
         originalPosition = transform.position;
