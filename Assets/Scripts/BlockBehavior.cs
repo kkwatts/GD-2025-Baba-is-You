@@ -15,6 +15,7 @@ public class BlockBehavior : MonoBehaviour {
     private BoxCollider col;
     private GameObject manager;
     private LayerMask ruleLayer, pushLayer, originalLayer;
+    private GameObject soundFX;
 
     private float minX, maxX, minY, maxY;
     private bool canMove;
@@ -52,6 +53,7 @@ public class BlockBehavior : MonoBehaviour {
         ruleLayer = LayerMask.GetMask("Rules");
         pushLayer = LayerMask.GetMask("Push");
         originalLayer = gameObject.layer;
+        soundFX = GameObject.FindGameObjectWithTag("Sound FX");
 
         minX = -10.8f;
         maxX = 10.8f;
@@ -240,6 +242,7 @@ public class BlockBehavior : MonoBehaviour {
         }
 
         if (movement != Vector3.zero) {
+            soundFX.GetComponent<AudioScript>().PlaySound("Step");
             if (gameObject.name == "Baba") {
                 gameObject.GetComponent<BabaAnimation>().Move();
             }
@@ -257,6 +260,7 @@ public class BlockBehavior : MonoBehaviour {
     private void OnTriggerEnter(Collider col) {
         if (tags.Contains("Win") && col.gameObject.GetComponent<BlockBehavior>().tags.Contains("You")) {
             col.GetComponent<BlockBehavior>().canMove = false;
+            soundFX.GetComponent<AudioScript>().PlaySound("Win");
             for (int i = 0; i < 8; i++) {
                 Instantiate(manager.GetComponent<GameManager>().VFX[2], transform.position, Quaternion.identity);
             }
@@ -437,6 +441,9 @@ public class BlockBehavior : MonoBehaviour {
         for (int i = 0; i < 6; i++) {
             GameObject cloud = Instantiate(manager.GetComponent<GameManager>().VFX[3], transform.position, Quaternion.identity);
             cloud.GetComponent<SpriteRenderer>().color = activeColor;
+        }
+        if (gameObject.tag == "Connector Block") {
+            soundFX.GetComponent<AudioScript>().PlaySound("Goal");
         }
     }
 

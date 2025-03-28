@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour {
     private SpriteRenderer render;
 
     private int level;
-    public bool inLevel;
     private bool transitioning;
 
     public GameObject[] VFX;
@@ -15,6 +14,8 @@ public class GameManager : MonoBehaviour {
     public GameObject[] menuSelectors;
     public GameObject mainMenu;
     public GameObject levelSelect;
+    public GameObject music;
+    public bool inLevel;
 
     private List<GameObject> rules;
     private List<GameObject> objects;
@@ -59,6 +60,9 @@ public class GameManager : MonoBehaviour {
             }
             if (count == you.Count) {
                 GameUpdate();
+            }
+            if (Input.GetKeyDown(KeyCode.R)) {
+                GoToLevel(level);
             }
         }
         if (transitioning) {
@@ -246,6 +250,7 @@ public class GameManager : MonoBehaviour {
         inLevel = false;
         transitioning = false;
         if (action == 1) {
+            music.GetComponent<AudioScript>().ChangeMusic("Title");
             menuSelectors[1].GetComponent<LevelSelectScript>().LoadLevelSelect();
             levelSelect.SetActive(true);
             mainMenu.SetActive(false);
@@ -254,6 +259,7 @@ public class GameManager : MonoBehaviour {
             levels[2].SetActive(false);
         }
         else if (action == 2) {
+            music.GetComponent<AudioScript>().ChangeMusic("Title");
             menuSelectors[0].GetComponent<MenuScript>().LoadMenu();
             mainMenu.SetActive(true);
             levelSelect.SetActive(false);
@@ -262,6 +268,7 @@ public class GameManager : MonoBehaviour {
             levels[2].SetActive(false);
         }
         else if (action == 3) {
+            music.GetComponent<AudioScript>().ChangeMusic("Level");
             level = subaction;
             mainMenu.SetActive(false);
             levelSelect.SetActive(false);

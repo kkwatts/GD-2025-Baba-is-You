@@ -7,6 +7,7 @@ public class MenuScript : MonoBehaviour {
     public float offset;
 
     private GameObject manager;
+    private GameObject soundFX;
 
     private int buttonNum;
     private int menu;
@@ -15,6 +16,7 @@ public class MenuScript : MonoBehaviour {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         manager = GameObject.FindGameObjectWithTag("GameController");
+        soundFX = GameObject.FindGameObjectWithTag("Sound FX");
 
         if (gameObject.name == "Selector") {
             menu = 1;
@@ -41,6 +43,7 @@ public class MenuScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) {
                     canSelect = false;
                     manager.GetComponent<GameManager>().GoToLevelSelect();
+                    soundFX.GetComponent<AudioScript>().PlaySound("Goal");
                 }
             }
             else if (buttonNum == 2) {
@@ -48,6 +51,7 @@ public class MenuScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) {
                     buttonNum = 5;
                     menu = 2;
+                    soundFX.GetComponent<AudioScript>().PlaySound("Goal");
                 }
             }
             else if (buttonNum == 3) {
@@ -55,6 +59,7 @@ public class MenuScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) {
                     buttonNum = 6;
                     menu = 3;
+                    soundFX.GetComponent<AudioScript>().PlaySound("Goal");
                 }
             }
             else if (buttonNum == 4) {
@@ -68,6 +73,7 @@ public class MenuScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) {
                     buttonNum = 2;
                     menu = 1;
+                    soundFX.GetComponent<AudioScript>().PlaySound("Goal");
                 }
             }
             else if (buttonNum == 6) {
@@ -75,14 +81,17 @@ public class MenuScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) {
                     buttonNum = 3;
                     menu = 1;
+                    soundFX.GetComponent<AudioScript>().PlaySound("Goal");
                 }
             }
 
             if (buttonNum > 1 && canSelect && menu == 1 && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))) {
                 buttonNum--;
+                soundFX.GetComponent<AudioScript>().PlaySound("Step");
             }
             else if (buttonNum < 4 && canSelect && menu == 1 && (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))) {
                 buttonNum++;
+                soundFX.GetComponent<AudioScript>().PlaySound("Step");
             }
 
             if (menu == 1) {
